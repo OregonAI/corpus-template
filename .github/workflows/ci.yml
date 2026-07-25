@@ -6,8 +6,8 @@ on:
 
 jobs:
   frontmatter:
-    uses: OregonAI/corpus-toolkit/.github/workflows/validate-frontmatter.yml@v1.0.3
+    uses: OregonAI/corpus-toolkit/.github/workflows/validate-frontmatter.yml@v1.0.4
   provenance:
-    uses: OregonAI/corpus-toolkit/.github/workflows/verify-provenance.yml@v1.0.3
+    uses: OregonAI/corpus-toolkit/.github/workflows/verify-provenance.yml@v1.0.4
   links:
-    uses: OregonAI/corpus-toolkit/.github/workflows/check-links.yml@v1.0.3
+    uses: OregonAI/corpus-toolkit/.github/workflows/check-links.yml@v1.0.4
