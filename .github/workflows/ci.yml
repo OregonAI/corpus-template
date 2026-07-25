@@ -1,0 +1,13 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  frontmatter:
+    uses: OregonAI/corpus-toolkit/.github/workflows/validate-frontmatter.yml@v1.0.0
+  provenance:
+    uses: OregonAI/corpus-toolkit/.github/workflows/verify-provenance.yml@v1.0.0
+  links:
+    uses: OregonAI/corpus-toolkit/.github/workflows/check-links.yml@v1.0.0

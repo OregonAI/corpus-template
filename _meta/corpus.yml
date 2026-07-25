@@ -1,0 +1,51 @@
+# Corpus configuration — the single source of truth the toolkit reads.
+corpus:
+  id: "{{CORPUS_ID}}"                # = repo name, e.g. oregon-records-retention
+  name: "{{CORPUS_NAME}}"            # display name
+  jurisdiction: "{{JURISDICTION}}"   # e.g. oregon | oregon/marion-county | oregon/salem
+  archetype: "{{ARCHETYPE}}"         # document | api | hybrid
+  schema_version: 1
+  contract_version: 1
+
+content_roots:                       # where document files live (document/hybrid).
+                                     # jurisdiction-wide root: one doc_type for the
+                                     # whole directory —
+  - path: "documents"
+    doc_type: "{{DOC_TYPE}}"
+                                     # issuing-body-scoped root: <path>/<slug>/<subdir> —
+  # - path: "agencies"
+  #   scoped: true
+  #   subdirs:
+  #     policies: policy
+  #     procedures: procedure
+
+plugins:
+  # citation_module: "src.citation_schemes"    # calls mcp.framework.register_scheme()
+  # snapshot_slice_module: "src.slicing:slice" # (doc_id, snapshot_id, raw_text) -> str
+  # issuing_body_registry: "_meta/catalog/issuing-bodies.yml"   # {entries: [{slug, name, ...}]}
+  # issuing_body_profiles: "_meta/issuing-body-profiles.yml"    # {profiles: {slug: {...}}}
+  extra_schema_checks: []            # [{path: "...", schema: "..."}, ...]
+
+disclaimer_marker: "NON-AUTHORITATIVE"
+graph_path: "_meta/graph.json"
+source_manifest_path: "_meta/source-manifest.yml"
+snapshot_dir: "_meta/snapshots"
+
+provenance:
+  coverage_fail_threshold: 0.70
+  coverage_warn_threshold: 0.90
+
+api:                                 # api/hybrid only — delete otherwise
+  endpoints: []
+  # - name: "example"
+  #   base_url: ""
+  #   protocol: odata | soda | rest
+  #   read_only: true
+  #   max_results: 1000
+
+mcp:
+  server_name: "{{CORPUS_ID}}"
+  transports: [stdio, http]
+
+status:
+  reverify_days: 90                  # quarterly re-verification SLA
