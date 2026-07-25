@@ -1,0 +1,14 @@
+# Every upstream source this corpus consumes. Human-approved via PR
+# BEFORE any ingestion (review gate #1).
+#
+# sources:
+#   - id: ""
+#     citation: ""
+#     title: ""
+#     url: ""
+#     doc_type: ""
+#     recheck: monthly | quarterly | annual | biennial
+#     sha256: ""            # filled at first fetch
+#     why_relevant: ""
+#     references_out: []
+sources: []

@@ -1,0 +1,17 @@
+# {{CORPUS_NAME}}
+
+> Non-authoritative, AI-friendly reference for {{CORPUS_SCOPE_DESCRIPTION}}.
+> Full verbatim text of jurisdiction-authored documents is included in-repo;
+> third-party materials are summarized with links to official sources.
+> Always verify against the authoritative source linked in each document.
+
+## Start here
+
+- [AGENTS.md](AGENTS.md): rules for AI agents working in this corpus
+- [STATUS.md](STATUS.md): freshness, coverage, and drift at a glance
+
+## Contents
+
+<!-- One annotated link per knowledge body / index:
+- [Title](path/_index.md): when an agent should consult it
+-->
