@@ -9,4 +9,4 @@ jobs:
     permissions:
       contents: write
       issues: write
-    uses: OregonAI/corpus-toolkit/.github/workflows/detect-upstream-changes.yml@v1.0.4
+    uses: OregonAI/corpus-toolkit/.github/workflows/detect-upstream-changes.yml@v1.0.5
