@@ -22,9 +22,32 @@ content_roots:                       # where document files live (document/hybri
 plugins:
   # citation_module: "src.citation_schemes"    # calls mcp.framework.register_scheme()
   # snapshot_slice_module: "src.slicing:slice" # (doc_id, snapshot_id, raw_text) -> str
-  # issuing_body_registry: "_meta/catalog/issuing-bodies.yml"   # {entries: [{slug, name, ...}]}
+  # semantic_search_module: "src.semantic_search"  # module exposing available() -> bool
+  #                                                # and rank(query, want) -> [doc_id]
+  # issuing_body_registry: "_meta/catalog/issuing-bodies.yml"
+  # issuing_body_registry_key: "entries"       # the TOP-LEVEL KEY inside that file.
+  #                                            # Defaults to "entries"; if your registry
+  #                                            # is keyed differently (e.g. "organizations")
+  #                                            # and you omit this, the toolkit reads an
+  #                                            # EMPTY registry and silently enforces no
+  #                                            # slug validation at all.
   # issuing_body_profiles: "_meta/issuing-body-profiles.yml"    # {profiles: {slug: {...}}}
   extra_schema_checks: []            # [{path: "...", schema: "..."}, ...]
+
+# Sibling corpora this one resolves citations INTO (toolkit >= 1.1.0). Optional;
+# omit entirely and resolution stays purely local, exactly as before v1.1.0.
+#
+# Use this instead of copying documents across corpora. A citation that resolves
+# next door stays one source of truth; a copied document becomes a second one that
+# drifts. `index_url` should point at an index the sibling PUBLISHES (e.g. from its
+# Pages build) rather than a committed file — a committed index can fall behind its
+# own corpus, and the damage lands here, as a resolution returning a stale title.
+#
+# Mark the matching citation schemes with register_scheme(..., corpus="<sibling id>").
+# siblings:
+#   - id: "sibling-corpus-name"
+#     index_url: "https://ORG.github.io/sibling-corpus-name/corpus-index.json"
+#     web_base:  "https://github.com/ORG/sibling-corpus-name/blob/main/"
 
 disclaimer_marker: "NON-AUTHORITATIVE"
 graph_path: "_meta/graph.json"
@@ -35,13 +58,16 @@ provenance:
   coverage_fail_threshold: 0.70
   coverage_warn_threshold: 0.90
 
-api:                                 # api/hybrid only — delete otherwise
-  endpoints: []
-  # - name: "example"
-  #   base_url: ""
-  #   protocol: odata | soda | rest
-  #   read_only: true
-  #   max_results: 1000
+# api: DELETE THIS BLOCK for archetype: document. The loader ignores it, so an
+#      orphaned api: block is silently inert — it misleads a reader into thinking
+#      live endpoints are configured when nothing reads them.
+# api:                               # api/hybrid only
+#   endpoints: []
+#   - name: "example"
+#     base_url: ""
+#     protocol: odata | soda | rest
+#     read_only: true
+#     max_results: 1000
 
 mcp:
   server_name: "{{CORPUS_ID}}"
