@@ -6,8 +6,37 @@ on:
 
 jobs:
   frontmatter:
-    uses: OregonAI/corpus-toolkit/.github/workflows/validate-frontmatter.yml@v1.0.5
+    uses: OregonAI/corpus-toolkit/.github/workflows/validate-frontmatter.yml@v1.1.0
   provenance:
-    uses: OregonAI/corpus-toolkit/.github/workflows/verify-provenance.yml@v1.0.5
+    uses: OregonAI/corpus-toolkit/.github/workflows/verify-provenance.yml@v1.1.0
   links:
-    uses: OregonAI/corpus-toolkit/.github/workflows/check-links.yml@v1.0.5
+    uses: OregonAI/corpus-toolkit/.github/workflows/check-links.yml@v1.1.0
+    with:
+      # lychee walks './**/*.md'. Without these exclusions it crawls
+      # _meta/templates/document.md — a skeleton whose example URLs are not meant
+      # to resolve — and every PR fails on link rot that is not link rot.
+      # _meta/snapshots/ is excluded because a large corpus's snapshots would drag
+      # hundreds of upstream URLs into a per-PR gate; upstream availability is what
+      # the scheduled drift job is for.
+      exclude-paths: |
+        _meta/snapshots
+        _meta/templates
+
+  # Generated artifacts must not drift from the documents they derive from.
+  #
+  # This is the gate the toolkit cannot provide for you. It only READS
+  # _meta/graph.json, so nothing upstream notices when a document is added and the
+  # graph is not rebuilt — resolve_citation and graph_neighbors simply stop finding
+  # it, silently, with no error anywhere. Add a step here for every generated file
+  # this corpus commits.
+  generated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Authority graph must be current
+        run: python3 src/build_graph.py --check

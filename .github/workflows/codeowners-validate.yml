@@ -1,0 +1,42 @@
+name: codeowners-validate
+on:
+  pull_request:
+    paths: [".github/CODEOWNERS"]
+  push:
+    branches: [main]
+    paths: [".github/CODEOWNERS"]
+  workflow_dispatch:
+
+# GitHub SILENTLY IGNORES a CODEOWNERS entry it cannot resolve — an unknown user
+# or a nonexistent team produces no error anywhere, and the file then looks like
+# a review gate while enforcing nothing. This turns that silence into a failure.
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every owner must be a real, resolvable account or team
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          fail=0
+          owners=$(grep -vE '^\s*#|^\s*$' .github/CODEOWNERS | tr ' ' '\n' | grep '^@' | sort -u || true)
+          if [ -z "$owners" ]; then echo "::error::CODEOWNERS lists no owners"; exit 1; fi
+          for o in $owners; do
+            name="${o#@}"
+            case "$name" in
+              *PLACEHOLDER*)
+                echo "::error::$o is the template placeholder — set a real owner"; fail=1;;
+              */*)
+                org="${name%%/*}"; team="${name##*/}"
+                if gh api "orgs/$org/teams/$team" >/dev/null 2>&1; then echo "ok: $o (team)"
+                else echo "::error::$o does not resolve to a team in $org"; fail=1; fi;;
+              *)
+                if gh api "users/$name" >/dev/null 2>&1; then echo "ok: $o (user)"
+                else echo "::error::$o is not a GitHub user"; fail=1; fi;;
+            esac
+          done
+          exit $fail
