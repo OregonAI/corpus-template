@@ -17,4 +17,4 @@ Archetype: **{{ARCHETYPE}}**. MCP interface: contract v1.
 
 ## License
 Content (curated government material): CC0-1.0. Tooling, structure,
-metadata: MIT.
+metadata: MIT. See [LICENSE](LICENSE).

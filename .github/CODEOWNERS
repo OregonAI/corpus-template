@@ -1,2 +1,16 @@
-# Assign content directories to their responsible reviewer(s).
-* @OregonAI/maintainers
+# Every PR needs a review from an owner listed here.
+#
+# IMPORTANT: replace @OregonAI/OWNER-PLACEHOLDER before the first PR. GitHub
+# SILENTLY IGNORES an owner it cannot resolve — an unknown user or a team that
+# does not exist produces no error, no warning, and no review requirement. The
+# file then looks like a review gate while enforcing nothing at all, which is
+# strictly worse than having no CODEOWNERS: you believe you are protected.
+#
+# Use a real GitHub handle (@someone) or a team that actually exists in the org
+# (@OregonAI/team-name — check with: gh api orgs/OregonAI/teams).
+* @OregonAI/OWNER-PLACEHOLDER
+
+# Narrow ownership per area as the corpus grows, e.g.
+# /_meta/    @OregonAI/OWNER-PLACEHOLDER
+# /src/      @OregonAI/OWNER-PLACEHOLDER
+# /.github/  @OregonAI/OWNER-PLACEHOLDER
