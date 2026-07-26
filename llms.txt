@@ -12,6 +12,7 @@
 
 ## Contents
 
-<!-- One annotated link per knowledge body / index:
-- [Title](path/_index.md): when an agent should consult it
--->
+<!-- One annotated link per knowledge body / index, e.g.
+     - `[Title](path/_index.md)`: when an agent should consult it
+     Written as inline code rather than a live link: lychee checks llms.txt by
+     name, and an example path that does not exist would fail CI on day one. -->

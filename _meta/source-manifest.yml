@@ -1,11 +1,24 @@
-# Every upstream source this corpus consumes. Human-approved via PR
-# BEFORE any ingestion (review gate #1).
+# Every upstream source this corpus consumes. Human-approved via PR BEFORE any
+# ingestion (review gate #1).
+#
+# WHICH KEYS THE TOOLKIT ACTUALLY READS (corpus_toolkit/sources/changes.py):
+#   url     REQUIRED. Missing it raises KeyError mid-run, not a clean error.
+#   format  Strongly recommended. Without it the format is INFERRED FROM THE URL
+#           EXTENSION — and an extensionless URL that actually serves a PDF is
+#           inferred as html, so drift detection runs an HTML-to-text converter
+#           over PDF bytes and reports a change EVERY RUN, FOREVER. Declare it
+#           whenever the URL does not end in a real extension.
+#   id      Used to name the snapshot and report which source drifted.
+#
+# Everything else below is for humans and for this repo's own ingester; the
+# toolkit ignores it. That is fine — record what your reviewers need.
 #
 # sources:
-#   - id: ""
+#   - id: ""                # -> _meta/snapshots/<id>.<format>
+#     url: ""               # REQUIRED
+#     format: pdf           # html | pdf | json | xlsx | ... declare it explicitly
 #     citation: ""
 #     title: ""
-#     url: ""
 #     doc_type: ""
 #     recheck: monthly | quarterly | annual | biennial
 #     sha256: ""            # filled at first fetch
