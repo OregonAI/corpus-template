@@ -3,10 +3,7 @@ __pycache__/
 .venv/
 *.pyc
 
-# Toolkit-managed caches. _meta/.cache/
-
-# corpus-detect-changes writes this to the repo root on every run.
-changed-sources.tsv is written by the MCP framework itself:
+# Toolkit-managed caches. _meta/.cache/ is written by the MCP framework itself:
 # fts.db (an SQLite full-text index over every document) and siblings/ (cached
 # sibling-corpus indexes for cross-corpus citation resolution). Neither is an
 # input to anything — both rebuild on demand — and committing a binary SQLite
