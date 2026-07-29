@@ -4,6 +4,15 @@ corpus:
   name: "{{CORPUS_NAME}}"            # display name
   jurisdiction: "{{JURISDICTION}}"   # e.g. oregon | oregon/marion-county | oregon/salem
   archetype: "{{ARCHETYPE}}"         # document | api | hybrid
+  # Where the OFFICIAL text lives — the ORS/OAR landing page, the SoS Archives
+  # schedules page, the legislature's bill site. Emitted on every MCP response
+  # (interface contract, response convention 1). Not optional in practice: the
+  # disclaimer on every response tells an agent this copy is non-authoritative and to
+  # "verify at source", and without this it is never told WHERE the source is. All four
+  # corpora that predate this key shipped without one, and every agent asking them
+  # `corpus_overview` was given that dead end. Requires corpus-toolkit >= 1.7.0;
+  # corpus-validate-frontmatter warns while it is unset.
+  authoritative_source: "{{AUTHORITATIVE_SOURCE_URL}}"
   schema_version: 1
   contract_version: 1
 
