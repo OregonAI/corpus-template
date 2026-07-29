@@ -49,6 +49,17 @@ jobs:
       - name: Every owner must be a real, resolvable account or team
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # THE ONE REPOSITORY WHERE THE PLACEHOLDER IS CORRECT. Everywhere else an
+          # unreplaced placeholder is the defect this whole workflow exists to catch,
+          # and it must stay a hard failure — hence a single exact repo name rather
+          # than a pattern. A corpus made from this template carries this line, and the
+          # comparison simply never matches there.
+          #
+          # This was found by making the workflow able to run (see the triggers above):
+          # its first PR run failed on THIS repo's own `@OregonAI/OWNER-PLACEHOLDER`.
+          # The check was right for the entire time it was unreachable, which is the
+          # whole argument for the trigger change in one line.
+          TEMPLATE_REPO: OregonAI/corpus-template
         run: |
           set -euo pipefail
           fail=0
@@ -58,7 +69,12 @@ jobs:
             name="${o#@}"
             case "$name" in
               *PLACEHOLDER*)
-                echo "::error::$o is the template placeholder — set a real owner"; fail=1;;
+                if [ "${GITHUB_REPOSITORY:-}" = "$TEMPLATE_REPO" ]; then
+                  echo "ok: $o (placeholder, expected in the template itself — every"
+                  echo "    corpus made from it MUST replace this; see AGENTS.md step 3)"
+                else
+                  echo "::error::$o is the template placeholder — set a real owner"; fail=1
+                fi;;
               */*)
                 org="${name%%/*}"; team="${name##*/}"
                 if gh api "orgs/$org/teams/$team" >/dev/null 2>&1; then echo "ok: $o (team)"
