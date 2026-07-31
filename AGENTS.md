@@ -91,9 +91,16 @@ PR. See toolkit `docs/replication-guide.md`.
 5. **Build the graph**: `python3 src/build_graph.py`. Nothing in the toolkit
    writes `_meta/graph.json`; without it citation resolution silently returns
    nothing. The `generated` CI job keeps it honest.
-6. **Add a `--check` CI step for every generated file you commit.** A gate that
+6. **Regenerate `STATUS.md`**: `corpus-generate-status --config _meta/corpus.yml
+   --output STATUS.md`. The committed file is a placeholder and says so. This
+   cannot be caught by CI: `--check` strips every line matching `generated|last
+   updated|as of` before comparing — deliberately, so the date does not make the
+   file perpetually stale — which means the one field it can never gate is the
+   date. `oregon-audits` shipped carrying the template's authoring date, three
+   days stale on day one, with the gate green.
+7. **Add a `--check` CI step for every generated file you commit.** A gate that
    exists but is not wired is worse than no gate: it reads as covered.
-7. **Declare siblings** in `_meta/corpus.yml` if this corpus cites documents in
+8. **Declare siblings** in `_meta/corpus.yml` if this corpus cites documents in
    another one, and mark those citation schemes with
    `register_scheme(..., corpus="<sibling id>")`. Reference across corpora;
    never copy documents between them.
