@@ -10,9 +10,17 @@ corpus:
   # disclaimer on every response tells an agent this copy is non-authoritative and to
   # "verify at source", and without this it is never told WHERE the source is. All four
   # corpora that predate this key shipped without one, and every agent asking them
-  # `corpus_overview` was given that dead end. Requires corpus-toolkit >= 1.7.0;
-  # corpus-validate-frontmatter warns while it is unset.
-  authoritative_source: "{{AUTHORITATIVE_SOURCE_URL}}"
+  # `corpus_overview` was given that dead end. Requires corpus-toolkit >= 1.7.0.
+  #
+  # URL-SHAPED ON PURPOSE, unlike every other placeholder in this file. Since toolkit v1.10.0
+  # a non-URL here is a validation ERROR, not a warning — the reasoning being that response
+  # convention 1 says this field IS a URL, so a caller will try to follow it. A bare
+  # `{{AUTHORITATIVE_SOURCE_URL}}` therefore made the template fail its own CI the moment it
+  # was repinned past v1.9.0: every corpus would have started life from a template that does
+  # not pass. `.invalid` is reserved by RFC 2606 precisely so it can never resolve, so this
+  # is still unmistakably a placeholder — it just fails at the right time, when someone
+  # follows it, rather than blocking the template from validating itself.
+  authoritative_source: "https://REPLACE-ME.invalid/where-the-official-text-lives"
   schema_version: 1
   contract_version: 1
 
