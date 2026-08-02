@@ -14,9 +14,13 @@ name: publish-index
 # ---------------------------------------------------------------------------------------
 # TWO THINGS TO DO WHEN YOU INSTANTIATE THIS TEMPLATE
 #
-# 1. Enable Pages on the new repo with the WORKFLOW builder, not the default:
-#        gh api -X PUT repos/<org>/<repo>/pages -f build_type=workflow
-#    GitHub auto-enables the legacy Jekyll builder, which fights an Actions deploy.
+# 1. Enable Pages on the new repo with the WORKFLOW builder. A fresh repo has NO Pages
+#    site yet, so it must be CREATED with POST — the previously documented PUT 404s on a
+#    repo without one, silently, and the corpus stays invisible to every sibling until
+#    someone notices (corpus-template#14; it bit oregon-counties):
+#        gh api -X POST repos/<org>/<repo>/pages -f build_type=workflow
+#    (PUT is only for CHANGING an existing site's build type.) Then VERIFY it answered:
+#        gh api repos/<org>/<repo>/pages -q .build_type    # must print: workflow
 #
 # 2. If your corpus also deploys its own Pages site, DELETE this file and publish
 #    corpus-index.json from that workflow instead. Two workflows deploying to one Pages
@@ -49,10 +53,10 @@ jobs:
     # needs no action on instantiation: the repository name stops matching, and the job
     # starts running by itself.
     if: github.repository != 'OregonAI/corpus-template'
-    uses: OregonAI/corpus-toolkit/.github/workflows/publish-index.yml@v1.16.0
+    uses: OregonAI/corpus-toolkit/.github/workflows/publish-index.yml@v1.19.0
     with:
       # Pin the CODE, not just the workflow file above. These are separate knobs: `uses:`
       # selects the workflow file, `toolkit-ref` selects the toolkit it installs. Leave
       # this out and you silently run whatever the default happens to be. Bump both
       # together.
-      toolkit-ref: v1.16.0
+      toolkit-ref: v1.19.0

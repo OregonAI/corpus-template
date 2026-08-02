@@ -6,20 +6,20 @@ on:
 
 jobs:
   frontmatter:
-    uses: OregonAI/corpus-toolkit/.github/workflows/validate-frontmatter.yml@v1.16.0
+    uses: OregonAI/corpus-toolkit/.github/workflows/validate-frontmatter.yml@v1.19.0
     with:
       # Pin the CODE, not just the workflow file above — separate knobs.
-      toolkit-ref: v1.16.0
+      toolkit-ref: v1.19.0
   provenance:
-    uses: OregonAI/corpus-toolkit/.github/workflows/verify-provenance.yml@v1.16.0
+    uses: OregonAI/corpus-toolkit/.github/workflows/verify-provenance.yml@v1.19.0
     with:
       # Pin the CODE, not just the workflow file above — separate knobs.
-      toolkit-ref: v1.16.0
+      toolkit-ref: v1.19.0
   links:
-    uses: OregonAI/corpus-toolkit/.github/workflows/check-links.yml@v1.16.0
+    uses: OregonAI/corpus-toolkit/.github/workflows/check-links.yml@v1.19.0
     with:
       # Pin the CODE, not just the workflow file above — separate knobs.
-      toolkit-ref: v1.16.0
+      toolkit-ref: v1.19.0
       # lychee walks './**/*.md'. Without these exclusions it crawls
       # _meta/templates/document.md — a skeleton whose example URLs are not meant
       # to resolve — and every PR fails on link rot that is not link rot.
@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: OregonAI/corpus-toolkit
-          ref: v1.16.0
+          ref: v1.19.0
           path: .toolkit
       - uses: actions/setup-python@v5
         with:
@@ -78,5 +78,17 @@ jobs:
       - run: pip install ./.toolkit
       - name: Authority graph must be current
         run: python3 src/build_graph.py --check
+      # The llms.txt Contents stub must not survive into a real corpus. Five live
+      # corpora carried the template's HTML-comment placeholder for weeks — an advertised
+      # agent entry point serving an empty index — because nothing ever forced the fill
+      # (corpus-template#16). Guarded here, not on the template itself: the template still
+      # carries {{CORPUS_NAME}} placeholders, and a repo that still has THOSE is the
+      # template (or an instantiation nobody finished, which contract_smoke catches).
+      - name: llms.txt Contents must be filled in
+        run: |
+          if ! grep -q "{{CORPUS_NAME}}" llms.txt && grep -q "One annotated link per" llms.txt; then
+            echo "llms.txt still carries the template's Contents stub — fill it in" >&2
+            exit 1
+          fi
       - name: STATUS.md must be current
         run: corpus-generate-status --config _meta/corpus.yml --output STATUS.md --check
