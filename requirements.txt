@@ -1,0 +1,8 @@
+# The toolkit pin — the 8th pin site, and the one the template never carried: every live
+# corpus hand-wrote this file, which is how new corpora were born on whatever tag the
+# operator remembered (corpus-template#16). Renovate keeps it current with the workflow
+# pins (grouped, one PR per release — see the org preset in OregonAI/.github).
+#
+# [mcp,semantic]: every live corpus serves both the MCP server and semantic search; the
+# semantic arm needs numpy, which the extra carries.
+corpus-toolkit[mcp,semantic] @ git+https://github.com/OregonAI/corpus-toolkit@v1.19.0
