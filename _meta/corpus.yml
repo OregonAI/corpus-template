@@ -3,7 +3,13 @@ corpus:
   id: "{{CORPUS_ID}}"                # = repo name, e.g. oregon-records-retention
   name: "{{CORPUS_NAME}}"            # display name
   jurisdiction: "{{JURISDICTION}}"   # e.g. oregon | oregon/marion-county | oregon/salem
-  archetype: "{{ARCHETYPE}}"         # document | api | hybrid
+  # document | api | hybrid — CHANGE THIS to your corpus's archetype. Ships as a literal
+  # default rather than a {{ARCHETYPE}} placeholder for the same reason authoritative_source
+  # ships a syntactically-valid .invalid URL below: toolkit v1.19.0 validates the archetype
+  # at load (a hybrid/api additionally requires plugins.tools_module before the server will
+  # start), so a bare placeholder failed the template's own CI. The replication guide's
+  # find/replace of {{ARCHETYPE}} still fills README/AGENTS prose.
+  archetype: "document"
   # Where the OFFICIAL text lives — the ORS/OAR landing page, the SoS Archives
   # schedules page, the legislature's bill site. Emitted on every MCP response
   # (interface contract, response convention 1). Not optional in practice: the
