@@ -5,4 +5,4 @@
 #
 # [mcp,semantic]: every live corpus serves both the MCP server and semantic search; the
 # semantic arm needs numpy, which the extra carries.
-corpus-toolkit[mcp,semantic] @ git+https://github.com/OregonAI/corpus-toolkit@v1.30.0
+corpus-toolkit[mcp,semantic] @ git+https://github.com/OregonAI/corpus-toolkit@v1.31.1
