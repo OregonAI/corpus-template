@@ -1,6 +1,6 @@
 # STATUS — {{CORPUS_NAME}}
 
-Generated TEMPLATE — not yet regenerated for this corpus; run `corpus-generate-status --config _meta/corpus.yml --output STATUS.md`. Non-authoritative; see DISCLAIMER.md.
+Generated 2026-08-31. Non-authoritative; see DISCLAIMER.md.
 
 ## Documents by type
 
