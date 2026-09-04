@@ -24,57 +24,41 @@ jobs:
 
   # EVERY COMMITTED GENERATED ARTIFACT MUST BE CURRENT, checked on every PR.
   #
-  # This is the gate the toolkit cannot provide for you. It only READS
-  # _meta/graph.json, so nothing upstream notices when a document is added and the
-  # graph is not rebuilt — resolve_citation and graph_neighbors simply stop finding
-  # it, silently, with no error anywhere.
+  # The toolkit only READS _meta/graph.json, so nothing upstream notices when a document is
+  # added and the graph is not rebuilt -- resolve_citation and graph_neighbors simply stop
+  # finding it, silently, with no error anywhere. The same is true of a stale STATUS.md and
+  # of an llms.txt still carrying the template's Contents stub (corpus-template#16: five
+  # live corpora advertised an empty agent entry point for weeks).
   #
-  # What this corpus commits, and what covers it:
+  # Those three gates are what every template-shaped corpus owes regardless of content, so
+  # they run from ONE place -- the toolkit's reusable template-gates.yml on the CI track
+  # (`@v1`, ADR-0014) -- and cannot drop out of this file one at a time, which is exactly
+  # what happened when each corpus carried its own copy (corpus-toolkit v1.35.0; CONTEXT.md
+  # "Template gates"). Where a gate genuinely does not apply, say so with an input
+  # (`graph-check: false`, `status-check: false`) rather than deleting the job.
   #
-  #   _meta/graph.json   src/build_graph.py         this job, every PR
-  #   STATUS.md          corpus-generate-status     this job, every PR
+  # _meta/corpus-index.json is deliberately NOT gated. The platform builds it at deploy
+  # time in publish-index.yml and never commits it, precisely so it cannot fall behind its
+  # own corpus in a way that damages a SIBLING repo's citation resolution.
   #
-  # STATUS.md is also regenerated and committed by the weekly `drift` job in
-  # scheduled.yml. That is a repair, not a gate: between Mondays a PR can merge a
-  # document and leave the published status wrong for six days with nothing saying so.
-  #
-  # _meta/corpus-index.json is deliberately ABSENT from this list. The platform builds
-  # it at deploy time in publish-index.yml and never commits it, precisely so it cannot
-  # fall behind its own corpus in a way that damages a SIBLING repo's citation
-  # resolution. Do not commit one and then gate it here; publish it instead.
-  #
-  # ADD A STEP HERE FOR EVERY GENERATED FILE YOU COMMIT. A generated file with no step
-  # is the failure this whole job exists to prevent, and it is silent by construction.
-  #
-  # Note the checks are `--check` rather than `git diff --exit-code`: STATUS.md carries
-  # a "Generated <date>" line, so a raw diff would fail every day for a reason that is
-  # not drift. Both `--check` implementations compare CONTENT and print the exact
-  # command to re-run.
+  # ADD A JOB FOR EVERY OTHER GENERATED FILE YOU COMMIT -- a `generated` job installing the
+  # toolkit at the SERVING pin (`pip install -r requirements.txt`) with one `--check` step per
+  # artifact, as oregon-budget and oregon-kpm do. A generated file with no check is the
+  # failure this whole arrangement exists to prevent, and it is silent by construction.
+  # Prefer `--check` to `git diff --exit-code`: STATUS.md carries a "Generated <date>" line.
+  template-gates:
+    uses: OregonAI/corpus-toolkit/.github/workflows/template-gates.yml@v1
+
+  # `generated` is this repo's required check. It waits for template-gates and fails when that
+  # failed -- skipped would count as passing -- so the gates are binding without a protection
+  # change. A corpus that commits its own generated files puts their `--check` steps here.
   generated:
+    needs: template-gates
+    if: always()
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      # Install the toolkit at the SERVING pin -- the one requirements.txt names and the
-      # Dockerfile bakes -- so these gates prove the toolkit this corpus actually ships. The
-      # reusable workflows above run the CI track at `@v1` (corpus-toolkit ADR-0014).
-      - run: pip install -r requirements.txt
-      - name: Authority graph must be current
-        run: python3 src/build_graph.py --check
-      # The llms.txt Contents stub must not survive into a real corpus. Five live
-      # corpora carried the template's HTML-comment placeholder for weeks — an advertised
-      # agent entry point serving an empty index — because nothing ever forced the fill
-      # (corpus-template#16). Guarded here, not on the template itself: the template still
-      # carries {{CORPUS_NAME}} placeholders, and a repo that still has THOSE is the
-      # template (or an instantiation nobody finished, which contract_smoke catches).
-      - name: llms.txt Contents must be filled in
+      - name: template-gates must have passed
+        if: needs.template-gates.result != 'success'
         run: |
-          if ! grep -q "{{CORPUS_NAME}}" llms.txt && grep -q "One annotated link per" llms.txt; then
-            echo "llms.txt still carries the template's Contents stub — fill it in" >&2
-            exit 1
-          fi
-      - name: STATUS.md must be current
-        run: corpus-generate-status --config _meta/corpus.yml --output STATUS.md --check
+          echo "template-gates finished with '${{ needs.template-gates.result }}' -- see that job" >&2
+          exit 1
