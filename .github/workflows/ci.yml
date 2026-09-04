@@ -49,16 +49,10 @@ jobs:
   template-gates:
     uses: OregonAI/corpus-toolkit/.github/workflows/template-gates.yml@v1
 
-  # `generated` is this repo's required check. It waits for template-gates and fails when that
-  # failed -- skipped would count as passing -- so the gates are binding without a protection
-  # change. A corpus that commits its own generated files puts their `--check` steps here.
+  # `generated` is where a corpus adds `--check` steps for the generated files IT commits beyond
+  # the template's (graph, STATUS.md, llms.txt are template-gates' job). The template itself
+  # commits none, so this is the empty required check a new corpus fills in.
   generated:
-    needs: template-gates
-    if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: template-gates must have passed
-        if: needs.template-gates.result != 'success'
-        run: |
-          echo "template-gates finished with '${{ needs.template-gates.result }}' -- see that job" >&2
-          exit 1
+      - run: echo "no corpus-specific generated files yet -- add one --check step here per file you commit"
