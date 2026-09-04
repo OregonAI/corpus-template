@@ -78,10 +78,12 @@ the toolkit resolves those against a sibling declared in `corpus.yml`
      the extraction you COMMITTED, once, at ingestion — never re-derived at
      verification time.
 
-     Do not compute this by hand. Call the toolkit:
+     Do not compute this by hand. Record the snapshot through the toolkit and take
+     the hash it returns (src/ingest_example.py does exactly this):
 
-       from corpus_toolkit.repo import hash_snapshot
-       source_sha256 = hash_snapshot(doc_id, source_format, snapshot_dir)
+       from corpus_toolkit.sources.snapshots import record_snapshot
+       snap = record_snapshot(config, doc_id, raw_bytes, source_format, text)
+       source_sha256 = snap.sha256      # and snap.content_hash moved the drift baseline
 
      Also enforced, and not obvious:
        - the filename stem MUST equal the frontmatter `id`
