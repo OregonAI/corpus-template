@@ -129,9 +129,13 @@ PR. See toolkit `docs/replication-guide.md`.
    so a wrong entry enforces nothing while looking like it does. Both are checked
    by `codeowners-validate.yml` on every PR; run the path half locally with
    `python3 .github/scripts/check-codeowners-paths.py`.
-4. **Write an ingester** under `src/`. It must satisfy the hashing contract in
-   `_meta/templates/document.md` — call `corpus_toolkit.repo.hash_snapshot`
-   rather than hashing anything yourself.
+4. **Shape the ingester**: edit `src/ingest_example.py`, which already runs on the
+   toolkit's ingest primitives (corpus-toolkit ADR-0016) — `Fetcher` (honest agent,
+   HTTP/2, politeness, refusals as exceptions), `record_snapshot` (snapshot files,
+   both hashes, the drift baseline) and `write_document` (frontmatter in the
+   platform's order, validated before it touches disk). What you write is the part
+   that is this corpus's: which sources, how bytes become text, what the body says.
+   Do not fetch with `urllib`, hash by hand, or assemble frontmatter as a string.
 5. **Build the graph**: `python3 src/build_graph.py`. Nothing in the toolkit
    writes `_meta/graph.json`; without it citation resolution silently returns
    nothing. The `generated` CI job keeps it honest.
