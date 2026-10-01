@@ -1,0 +1,26 @@
+{
+  "generated_by": "corpus-detect-changes 1.36.4",
+  "last_run": {
+    "date": "2026-10-01",
+    "group_filter": null,
+    "groups_in_scope": [],
+    "mode": "seed",
+    "red_reasons": [
+      "nothing was in scope, so nothing was checked"
+    ],
+    "toolkit_version": "1.36.4",
+    "totals": {
+      "accepted": 0,
+      "archive_unreadable": 0,
+      "changed": 0,
+      "fetch_failed": 0,
+      "seeded": 0,
+      "total": 0,
+      "unchanged": 0,
+      "unreadable_json": 0,
+      "watch_path_missing": 0
+    }
+  },
+  "schema_version": 1,
+  "sources": []
+}
